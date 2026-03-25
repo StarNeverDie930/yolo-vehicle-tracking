@@ -1,8 +1,13 @@
 # 数据集
 data/
 
-# 训练输出（模型权重太大）
-runs/
+# 模型权重（体积大，单独管理）
+runs/**/weights/
+*.pt
+*.pth
+
+# 训练样本预览图（可复现，无需存储）
+runs/**/*_batch*.jpg
 
 # Python
 __pycache__/
@@ -10,10 +15,6 @@ __pycache__/
 *.pyo
 .venv/
 venv/
-
-# 模型权重
-*.pt
-*.pth
 
 # 输出视频
 output/
