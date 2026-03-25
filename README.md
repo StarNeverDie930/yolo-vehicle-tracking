@@ -1,0 +1,91 @@
+# 基于YOLO的车辆轨迹与目标检测系统
+
+基于 YOLOv11 + Deep SORT 的车辆检测、跟踪与交通流量分析系统，提供 PyQt6 图形界面。
+
+## 功能
+
+- 实时车辆检测（YOLOv11）
+- 多目标跟踪与轨迹可视化（Deep SORT）
+- 车辆计数：基于唯一 track_id 去重，适合十字路口多方向场景
+- 分车型统计：car / bus / van / truck 累计数量
+- 近1分钟流量统计
+- 热力图生成
+- 视频导出
+
+## 环境要求
+
+- Python 3.10+
+- CUDA（推荐，CPU 也可运行）
+
+## 安装
+
+```bash
+pip install -r requirements.txt
+```
+
+## 使用
+
+```bash
+python main.py
+```
+
+1. 点击「打开视频」选择视频文件
+2. 点击「开始处理」开始检测与跟踪
+3. 右侧面板实时显示车辆总数、分车型统计、近1分钟流量
+4. 处理完成后可「生成热力图」或「导出视频」
+
+## 训练自定义模型
+
+**1. 转换 KITTI 数据集**
+```bash
+python kitti_to_yolo.py
+```
+
+**2. 合并 UA-DETRAC + KITTI 数据集**
+```bash
+python scripts/merge_datasets.py
+```
+
+**3. 训练**
+```bash
+python scripts/train.py \
+  --model runs/detrac_train/weights/best.pt \
+  --data scripts/merged.yaml \
+  --epochs 80 \
+  --lr0 0.0005 \
+  --cos-lr \
+  --name merged_train_v2
+```
+
+训练完成后修改 `config.yaml` 中的 `model.path` 指向新模型。
+
+## 项目结构
+
+```
+├── main.py                 # 程序入口
+├── config.yaml             # 运行配置
+├── core/
+│   ├── detector.py         # YOLOv11 检测
+│   ├── tracker.py          # Deep SORT 跟踪
+│   └── pipeline.py         # 处理流水线
+├── analysis/
+│   ├── counter.py          # 车辆计数与流量统计
+│   ├── trajectory.py       # 轨迹存储
+│   └── heatmap.py          # 热力图生成
+├── app/                    # PyQt6 界面
+├── scripts/
+│   ├── train.py            # 训练脚本
+│   ├── merge_datasets.py   # 数据集合并
+│   └── merged.yaml         # 合并数据集配置
+├── evaluation/             # 检测与跟踪评估
+└── utils/                  # 视频读写、绘图工具
+```
+
+## 数据集
+
+| 数据集 | 用途 |
+|--------|------|
+| UA-DETRAC | 交通监控场景，82,085 张 |
+| KITTI | 车载视角，补充静止车辆场景，6,920 张 |
+
+统一类别：`car(0)` / `bus(1)` / `van(2)` / `truck(3)`
