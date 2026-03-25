@@ -1,0 +1,10 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(identify \"d:/code/python/bishe/data/UA-DETRAC/Insight-MVT_Annotation_Train/MVI_20011/img00001.jpg\")",
+      "Bash(python3 -c \"from PIL import Image; img=Image.open\\(r''d:\\\\code\\\\python\\\\bishe\\\\data\\\\UA-DETRAC\\\\Insight-MVT_Annotation_Train\\\\MVI_20011\\\\img00001.jpg''\\); print\\(img.size\\)\")",
+      "Bash(python -c \"from PIL import Image; img=Image.open\\(r''data/UA-DETRAC/Insight-MVT_Annotation_Train/MVI_20011/img00001.jpg''\\); print\\(img.size\\)\")",
+      "Bash(ls \"d:/code/python/bishe/\"*.pt)"
+    ]
+  }
+}

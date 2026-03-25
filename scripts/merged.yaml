@@ -1,0 +1,7 @@
+# 合并数据集配置 (UA-DETRAC + KITTI)
+path: ../data/merged_yolo
+train: images/train
+val: images/val
+
+nc: 4
+names: ["car", "bus", "van", "truck"]

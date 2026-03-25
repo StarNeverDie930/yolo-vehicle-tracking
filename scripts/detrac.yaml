@@ -1,0 +1,8 @@
+# UA-DETRAC 车辆检测数据集 (YOLO格式)
+path: ../data/detrac_yolo
+train: images/train
+val: images/val
+
+# 类别
+nc: 4
+names: ["car", "bus", "van", "others"]

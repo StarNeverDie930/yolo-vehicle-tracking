@@ -1,0 +1,23 @@
+# 数据集
+data/
+
+# 训练输出（模型权重太大）
+runs/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+
+# 模型权重
+*.pt
+*.pth
+
+# 输出视频
+output/
+
+# IDE
+.vscode/
+*.idea/

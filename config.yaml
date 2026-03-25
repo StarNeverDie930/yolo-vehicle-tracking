@@ -1,0 +1,25 @@
+model:
+  path: "runs/detrac_train/weights/best.pt"
+  device: "auto"  # auto / cpu / 0 (GPU编号)
+  conf: 0.5
+  iou: 0.45
+  classes: [2, 3, 5, 7]  # car, motorcycle, bus, truck
+
+tracker:
+  max_age: 10
+  n_init: 5
+  max_cosine_distance: 0.2
+  nn_budget: 100
+
+counter:
+  line_position: 0.6  # 越线位置（相对于画面高度的比例）
+  direction: "horizontal"  # horizontal / vertical
+
+video:
+  output_codec: "mp4v"
+  output_fps: 30
+
+display:
+  box_thickness: 2
+  trajectory_length: 50
+  font_scale: 0.6
