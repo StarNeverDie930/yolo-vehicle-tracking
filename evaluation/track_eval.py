@@ -1,6 +1,10 @@
 import motmetrics as mm
 import numpy as np
 
+# motmetrics 使用了 NumPy 2.0 已移除的 np.asfarray，打补丁兼容
+if not hasattr(np, "asfarray"):
+    np.asfarray = lambda a, dtype=float: np.asarray(a, dtype=dtype)
+
 
 def evaluate_tracking(gt_file, pred_file):
     """
@@ -13,7 +17,7 @@ def evaluate_tracking(gt_file, pred_file):
 
     acc = mm.utils.compare_to_groundtruth(gt, pred, "iou", distth=0.5)
     mh = mm.metrics.create()
-    summary = mh.compute(acc, metrics=["mota", "motp", "idf1", "num_switches"], name="eval")
+    summary = mh.compute(acc, metrics=["mota", "motp", "idf1", "num_switches", "mostly_tracked"], name="eval")
 
     print(summary.to_string())
     return summary
