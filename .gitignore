@@ -1,34 +1,57 @@
-# 数据集
-data/
+# 本地 AI/IDE/索引工具缓存
+.agents/
+.claude/
+.serena/
+.vscode/
+.idea/
 
-# 模型权重（体积大，单独管理）
-runs/**/weights/
+# OpenSpec 项目规范建议保留在 openspec/
+# 仅忽略可能产生的临时目录
+openspec/**/.tmp/
+openspec/**/tmp/
+
+# 数据集、训练输出和模型权重
+data/
+runs/
+weights/
 *.pt
 *.pth
+*.onnx
+*.engine
+*.weights
+*.bin
 
-# 训练样本预览图（可复现，无需存储）
-runs/**/*_batch*.jpg
+# 视频和运行输出
+output/
+analysis/results/
+evaluation/results/
+*.mp4
+*.avi
+*.mkv
+*.mov
 
 # Python
 __pycache__/
-*.pyc
-*.pyo
+*.py[cod]
+*$py.class
 .venv/
 venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
 
-# 输出视频
-output/
+# 环境变量与本地配置
+.env
+.env.*
+*.local.yaml
+*.local.yml
 
-# 分析结果输出
-analysis/results/
-evaluation/results/20*/
-
-# IDE
-.vscode/
-*.idea/
-
-# 文档二进制源文件
+# 文档二进制源文件（docs/*.md 保留）
 docs/*.doc
 docs/*.docx
 docs/*.pptx
 docs/~$*
+
+# 系统临时文件
+.DS_Store
+Thumbs.db
