@@ -1,9 +1,9 @@
 from PySide6.QtWidgets import QWidget, QVBoxLayout, QLabel, QGroupBox
 
+from utils.taxonomy import CLASS_NAMES
+
 
 class ResultPanel(QWidget):
-    CLASS_NAMES = {0: "car", 1: "bus", 2: "van", 3: "truck"}
-
     def __init__(self, parent=None):
         super().__init__(parent)
         layout = QVBoxLayout(self)
@@ -37,20 +37,20 @@ class ResultPanel(QWidget):
         cls_group = QGroupBox("分车型统计（累计）")
         cls_layout = QVBoxLayout(cls_group)
         self.class_labels = {}
-        for cid, name in self.CLASS_NAMES.items():
+        for cid, name in CLASS_NAMES.items():
             lbl = QLabel(f"{name}: 0")
             cls_layout.addWidget(lbl)
             self.class_labels[cid] = lbl
         layout.addWidget(cls_group)
 
         # 流量统计
-        flow_group = QGroupBox("近1分钟流量")
+        flow_group = QGroupBox("流量窗口统计")
         flow_layout = QVBoxLayout(flow_group)
         self.flow_total_label = QLabel("合计: 0 辆")
         self.flow_total_label.setStyleSheet("font-weight: bold;")
         flow_layout.addWidget(self.flow_total_label)
         self.flow_labels = {}
-        for cid, name in self.CLASS_NAMES.items():
+        for cid, name in CLASS_NAMES.items():
             lbl = QLabel(f"{name}: 0")
             flow_layout.addWidget(lbl)
             self.flow_labels[cid] = lbl
@@ -75,13 +75,13 @@ class ResultPanel(QWidget):
 
         if class_counts:
             for cid, lbl in self.class_labels.items():
-                lbl.setText(f"{self.CLASS_NAMES[cid]}: {class_counts.get(cid, 0)}")
+                lbl.setText(f"{CLASS_NAMES[cid]}: {class_counts.get(cid, 0)}")
 
         if flow_rate:
             total_flow = sum(flow_rate.values())
             self.flow_total_label.setText(f"合计: {total_flow} 辆")
             for cid, lbl in self.flow_labels.items():
-                lbl.setText(f"{self.CLASS_NAMES[cid]}: {flow_rate.get(cid, 0)}")
+                lbl.setText(f"{CLASS_NAMES[cid]}: {flow_rate.get(cid, 0)}")
 
     def set_device(self, device_name):
         self.device_label.setText(f"计算设备: {device_name}")

@@ -19,6 +19,16 @@ venv/
 # 输出视频
 output/
 
+# 分析结果输出
+analysis/results/
+evaluation/results/20*/
+
 # IDE
 .vscode/
 *.idea/
+
+# 文档二进制源文件
+docs/*.doc
+docs/*.docx
+docs/*.pptx
+docs/~$*

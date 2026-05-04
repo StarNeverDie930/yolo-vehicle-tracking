@@ -33,7 +33,11 @@ def generate(seq, model_path=None):
         frame = cv2.imread(os.path.join(img_folder, fname))
         if frame is None:
             continue
-        _, tracks, _, _, _ = pipeline.process_frame(frame)
+        _, tracks, _, _, _ = pipeline.process_frame(
+            frame,
+            frame_idx=fnum - 1,
+            fps=config.get("video", {}).get("fallback_fps", 30),
+        )
         for t in tracks:
             x1, y1, x2, y2 = t["bbox"]
             w, h = x2 - x1, y2 - y1

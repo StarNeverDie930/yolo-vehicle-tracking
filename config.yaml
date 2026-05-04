@@ -3,7 +3,8 @@ model:
   device: "auto"  # auto / cpu / 0 (GPU编号)
   conf: 0.5
   iou: 0.45
-  classes: [2, 3, 5, 7]  # car, motorcycle, bus, truck
+  names: ["car", "bus", "van", "truck"]
+  classes: [2, 5, 7]  # COCO 预训练模型兜底过滤；自训练四类模型会忽略该项
 
 tracker:
   max_age: 10
@@ -12,12 +13,18 @@ tracker:
   nn_budget: 100
 
 counter:
+  mode: "unique_track"  # unique_track / line_crossing
   line_position: 0.6  # 越线位置（相对于画面高度的比例）
   direction: "horizontal"  # horizontal / vertical
+  flow_window: 60
 
 video:
   output_codec: "mp4v"
   output_fps: 30
+  fallback_fps: 30
+
+analysis:
+  output_dir: "analysis/results"
 
 display:
   box_thickness: 2

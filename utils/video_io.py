@@ -1,15 +1,19 @@
+import os
+
 import cv2
 
 
 class VideoReader:
-    def __init__(self, path):
+    def __init__(self, path, fallback_fps=30):
         self.cap = cv2.VideoCapture(path)
         if not self.cap.isOpened():
             raise FileNotFoundError(f"无法打开视频: {path}")
+        self.fallback_fps = fallback_fps
 
     @property
     def fps(self):
-        return self.cap.get(cv2.CAP_PROP_FPS)
+        fps = self.cap.get(cv2.CAP_PROP_FPS)
+        return fps if fps and fps > 0 else self.fallback_fps
 
     @property
     def frame_count(self):
@@ -37,9 +41,15 @@ class VideoReader:
 
 
 class VideoWriter:
-    def __init__(self, path, fps, width, height, codec="mp4v"):
+    def __init__(self, path, fps, width, height, codec="mp4v", fallback_fps=30):
+        fps = fps if fps and fps > 0 else fallback_fps
+        directory = os.path.dirname(path)
+        if directory:
+            os.makedirs(directory, exist_ok=True)
         fourcc = cv2.VideoWriter_fourcc(*codec)
         self.writer = cv2.VideoWriter(path, fourcc, fps, (width, height))
+        if not self.writer.isOpened():
+            raise RuntimeError(f"无法创建视频写入器: {path}")
 
     def write(self, frame):
         self.writer.write(frame)

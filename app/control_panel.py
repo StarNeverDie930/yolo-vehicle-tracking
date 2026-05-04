@@ -44,14 +44,6 @@ class ControlPanel(QWidget):
         self.iou_spin.valueChanged.connect(self.iou_changed.emit)
         layout.addWidget(self.iou_spin)
 
-        # 计数线位置
-        layout.addWidget(QLabel("计数线位置"))
-        self.line_slider = QSlider(Qt.Horizontal)
-        self.line_slider.setRange(10, 90)
-        self.line_slider.setValue(int(config["counter"]["line_position"] * 100))
-        self.line_slider.valueChanged.connect(lambda v: self.line_pos_changed.emit(v / 100.0))
-        layout.addWidget(self.line_slider)
-
         # 进度条
         layout.addWidget(QLabel("处理进度"))
         self.progress_bar = QProgressBar()

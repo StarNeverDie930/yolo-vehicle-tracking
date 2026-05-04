@@ -5,4 +5,4 @@ val: images/val
 
 # 类别
 nc: 4
-names: ["car", "bus", "van", "others"]
+names: ["car", "bus", "van", "truck"]

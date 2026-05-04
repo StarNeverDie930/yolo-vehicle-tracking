@@ -2,7 +2,7 @@
 将 UA-DETRAC XML 标注转换为 YOLO 格式，并划分训练集/验证集。
 
 YOLO 标注格式: class_id cx cy w h (归一化到 0-1)
-类别映射: car->0, bus->1, van->2, others->3
+统一类别: car->0, bus->1, van->2, truck->3（UA-DETRAC 的 others 折算到 truck）
 """
 
 import os
@@ -17,8 +17,8 @@ XML_DIR = os.path.join(DETRAC_DIR, "DETRAC-Train-Annotations-XML")
 IMG_DIR = os.path.join(DETRAC_DIR, "Insight-MVT_Annotation_Train")
 OUTPUT_DIR = os.path.join(BASE_DIR, "data", "detrac_yolo")
 
-# UA-DETRAC 车辆类型 -> YOLO 类别ID
-VEHICLE_MAP = {"car": 0, "bus": 1, "van": 2, "others": 3}
+# UA-DETRAC 车辆类型 -> 统一四类 YOLO 类别ID
+VEHICLE_MAP = {"car": 0, "bus": 1, "van": 2, "truck": 3, "others": 3}
 
 # 图片尺寸
 IMG_W, IMG_H = 960, 540

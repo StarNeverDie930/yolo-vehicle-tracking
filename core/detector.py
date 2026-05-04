@@ -1,15 +1,16 @@
 import torch
 from ultralytics import YOLO
-import numpy as np
+
+from utils.taxonomy import (
+    CLASS_NAMES,
+    COCO_TO_UNIFIED,
+    get_class_name,
+    normalize_model_class_id,
+)
 
 
 class VehicleDetector:
-    # COCO 类别映射
-    COCO_CLASSES = {2: "car", 3: "motorcycle", 5: "bus", 7: "truck"}
-    # DETRAC 类别映射
-    DETRAC_CLASSES = {0: "car", 1: "bus", 2: "van", 3: "others"}
-
-    def __init__(self, model_path="yolo11n.pt", conf=0.5, iou=0.45, classes=None, device="auto"):
+    def __init__(self, model_path="yolo11m.pt", conf=0.5, iou=0.45, classes=None, device="auto"):
         if device == "auto":
             device = "0" if torch.cuda.is_available() else "cpu"
         self.device = device
@@ -18,19 +19,23 @@ class VehicleDetector:
         self.conf = conf
         self.iou = iou
 
-        # 自动判断模型类型：DETRAC 训练的模型只有 4 类，不需要过滤
-        nc = len(self.model.names)
-        if nc <= 10:
-            # 自定义训练的模型（如 DETRAC），检测所有类别
-            self.classes = None
-            self.class_names = {i: name for i, name in self.model.names.items()}
+        raw_names = getattr(self.model, "names", {}) or {}
+        if isinstance(raw_names, dict):
+            self.model_names = dict(raw_names)
         else:
-            # COCO 预训练模型，只检测车辆类别
-            self.classes = classes or [2, 3, 5, 7]
-            self.class_names = self.COCO_CLASSES
+            self.model_names = {i: name for i, name in enumerate(raw_names)}
+        nc = len(self.model_names)
+        self.uses_coco_taxonomy = nc > len(CLASS_NAMES)
+        self.class_names = CLASS_NAMES
+
+        if self.uses_coco_taxonomy:
+            selected = classes if classes is not None else list(COCO_TO_UNIFIED)
+            self.classes = [int(cid) for cid in selected if int(cid) in COCO_TO_UNIFIED]
+        else:
+            self.classes = None
 
     def detect(self, frame):
-        """返回检测结果列表: [([x1,y1,x2,y2], conf, class_id), ...]"""
+        """返回统一 taxonomy 后的检测结果: [([x1,y1,x2,y2], conf, class_id), ...]"""
         results = self.model(frame, conf=self.conf, iou=self.iou, classes=self.classes, device=self.device, verbose=False)
         detections = []
         for r in results:
@@ -41,8 +46,14 @@ class VehicleDetector:
                 xyxy = box.xyxy[0].cpu().numpy().astype(int).tolist()
                 conf = float(box.conf[0])
                 cls = int(box.cls[0])
+                if self.uses_coco_taxonomy:
+                    cls = COCO_TO_UNIFIED.get(cls)
+                else:
+                    cls = normalize_model_class_id(cls, self.model_names)
+                if cls is None:
+                    continue
                 detections.append((xyxy, conf, cls))
         return detections
 
     def get_class_name(self, class_id):
-        return self.class_names.get(class_id, "unknown")
+        return get_class_name(class_id, "unknown")
