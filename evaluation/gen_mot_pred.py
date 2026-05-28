@@ -1,3 +1,5 @@
+"""使用当前处理流水线生成 MOTChallenge 预测文件。"""
+
 import os
 import sys
 import pathlib

@@ -1,3 +1,8 @@
+"""MOT 跟踪指标评估工具。
+
+读取 MOTChallenge 格式的真实值和预测值，计算 MOTA、MOTP、IDF1 等指标。
+"""
+
 import motmetrics as mm
 import numpy as np
 
@@ -6,7 +11,7 @@ if not hasattr(np, "asfarray"):
     np.asfarray = lambda a, dtype=float: np.asarray(a, dtype=dtype)
 
 
-def evaluate_tracking(gt_file, pred_file):
+def evaluate_tracking(gt_file, pred_file, metrics=None, name="eval"):
     """
     评估跟踪性能 (MOTA, MOTP, IDF1)
     gt_file / pred_file: MOTChallenge 格式的文本文件
@@ -17,7 +22,9 @@ def evaluate_tracking(gt_file, pred_file):
 
     acc = mm.utils.compare_to_groundtruth(gt, pred, "iou", distth=0.5)
     mh = mm.metrics.create()
-    summary = mh.compute(acc, metrics=["mota", "motp", "idf1", "num_switches", "mostly_tracked"], name="eval")
+    if metrics is None:
+        metrics = ["mota", "motp", "idf1", "num_switches", "mostly_tracked"]
+    summary = mh.compute(acc, metrics=metrics, name=name)
 
     print(summary.to_string())
     return summary

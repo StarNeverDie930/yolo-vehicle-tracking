@@ -1,4 +1,8 @@
-"""Structured analysis result recording and export helpers."""
+"""结构化分析结果记录与导出工具。
+
+负责把车辆轨迹摘要、车型统计、流量分桶、热点区域和性能信息写成
+CSV/JSON/TXT 结果，供论文分析或后续可视化使用。
+"""
 
 import csv
 import json
@@ -11,10 +15,14 @@ from utils.taxonomy import CLASS_IDS, class_percentages, get_class_name
 
 
 class AnalysisRecorder:
+    """按 track_id 记录车辆出现时间、持续时长和像素轨迹长度。"""
+
     def __init__(self):
+        """初始化轨迹摘要缓存。"""
         self.tracks = {}
 
     def update(self, tracks, frame_idx, timestamp):
+        """用当前帧匹配到的轨迹更新摘要信息。"""
         for track in tracks:
             if not track.get("matched", True):
                 continue
@@ -47,6 +55,7 @@ class AnalysisRecorder:
             record["_last_center"] = center
 
     def summaries(self):
+        """返回按 track_id 排序的轨迹摘要列表。"""
         rows = []
         for record in sorted(self.tracks.values(), key=lambda item: item["track_id"]):
             duration = max(0.0, record["last_timestamp"] - record["first_timestamp"])
@@ -63,6 +72,7 @@ class AnalysisRecorder:
         return rows
 
     def clear(self):
+        """清空已记录的轨迹摘要。"""
         self.tracks.clear()
 
 
@@ -77,6 +87,7 @@ def make_result_dir(base_dir, source_path=None, prefix="analysis"):
 
 def export_analysis_results(output_dir, class_counts, flow_buckets, track_summaries,
                             hotspots, performance, heatmap_paths=None):
+    """一次性写出全部分析文件，并返回结果目录。"""
     os.makedirs(output_dir, exist_ok=True)
     heatmap_paths = heatmap_paths or {}
     _write_class_counts(output_dir, class_counts)

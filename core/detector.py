@@ -1,3 +1,9 @@
+"""车辆检测封装。
+
+本模块负责把 Ultralytics YOLO 的原始输出转换为项目内部统一的
+车辆类别体系，供后续 Deep SORT 跟踪、计数和报表逻辑直接消费。
+"""
+
 import torch
 from ultralytics import YOLO
 
@@ -10,7 +16,10 @@ from utils.taxonomy import (
 
 
 class VehicleDetector:
+    """YOLO 检测器适配层，隐藏模型设备选择和类别映射细节。"""
+
     def __init__(self, model_path="yolo11m.pt", conf=0.5, iou=0.45, classes=None, device="auto"):
+        """加载模型并决定是否使用 COCO 到项目类别的映射。"""
         if device == "auto":
             device = "0" if torch.cuda.is_available() else "cpu"
         self.device = device
@@ -56,4 +65,5 @@ class VehicleDetector:
         return detections
 
     def get_class_name(self, class_id):
+        """返回项目统一类别名，未知类别回退为 unknown。"""
         return get_class_name(class_id, "unknown")

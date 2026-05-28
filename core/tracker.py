@@ -1,9 +1,18 @@
+"""Deep SORT 跟踪封装。
+
+将检测框转换为 deep-sort-realtime 所需格式，并把跟踪结果重新整理成
+项目统一的 track 字典结构。
+"""
+
 from deep_sort_realtime.deepsort_tracker import DeepSort
 
 
 class VehicleTracker:
+    """车辆多目标跟踪器，输出稳定的 track_id 和边界框。"""
+
     def __init__(self, max_age=10, n_init=5, max_cosine_distance=0.2, nn_budget=100,
                  max_staleness=3):
+        """初始化 Deep SORT，并记录允许保留的最大未匹配帧数。"""
         self.max_staleness = max_staleness
         self.tracker = DeepSort(
             max_age=max_age,
@@ -52,4 +61,5 @@ class VehicleTracker:
         return results
 
     def reset(self):
+        """清空所有跟踪状态，通常在新视频或新任务开始前调用。"""
         self.tracker.delete_all_tracks()

@@ -1,3 +1,5 @@
+"""UA-DETRAC 标注到 MOTChallenge GT 的转换脚本。"""
+
 import xml.etree.ElementTree as ET
 import os
 import argparse

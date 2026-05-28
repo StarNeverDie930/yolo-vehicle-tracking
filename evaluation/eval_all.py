@@ -1,3 +1,9 @@
+"""检测与跟踪评估总入口。
+
+按指定 UA-DETRAC 序列生成/归档 MOT 数据，并根据 mode 运行检测评估、
+跟踪评估或二者组合。
+"""
+
 import argparse
 import os
 import pathlib

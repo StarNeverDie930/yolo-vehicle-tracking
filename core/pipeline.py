@@ -1,3 +1,9 @@
+"""检测、跟踪、计数与结果导出的主处理流水线。
+
+ProcessingPipeline 是 GUI 和脚本共用的业务入口：它把单帧处理、整段视频
+处理、热力图与结构化分析结果导出串成一条稳定流程。
+"""
+
 import os
 import time
 
@@ -15,7 +21,10 @@ from utils.video_io import VideoReader, VideoWriter
 
 
 class ProcessingPipeline:
+    """组合检测器、跟踪器、统计器和绘图工具的高层流水线。"""
+
     def __init__(self, config):
+        """根据 config.yaml 初始化模型、跟踪器和分析组件。"""
         self.config = config
         model_cfg = config["model"]
         tracker_cfg = config["tracker"]
@@ -58,6 +67,7 @@ class ProcessingPipeline:
 
     @classmethod
     def from_config_file(cls, config_path="config.yaml"):
+        """从 YAML 配置文件构建处理流水线。"""
         with open(config_path, "r", encoding="utf-8") as f:
             config = yaml.safe_load(f)
         return cls(config)
@@ -156,9 +166,11 @@ class ProcessingPipeline:
         return self.counter.count
 
     def get_heatmap(self, frame_shape):
+        """生成当前累计轨迹热力图。"""
         return self.heatmap.generate(frame_shape)
 
     def save_heatmap(self, output_dir=None, frame=None, prefix="heatmap"):
+        """保存热力图相关图片，默认使用最后一帧作为叠加背景。"""
         if frame is None:
             frame = self.last_frame
         if frame is None:
@@ -211,6 +223,7 @@ class ProcessingPipeline:
         return result_dir
 
     def reset(self):
+        """重置一次视频任务中积累的跟踪、计数和分析状态。"""
         self.tracker.reset()
         self.trajectory_store.clear()
         self.counter.reset()
@@ -220,6 +233,7 @@ class ProcessingPipeline:
         self.last_result_dir = None
 
     def switch_model(self, model_path):
+        """切换检测模型，保留当前阈值和设备配置。"""
         self.config["model"]["path"] = model_path
         self.detector = VehicleDetector(
             model_path=model_path,
@@ -230,5 +244,6 @@ class ProcessingPipeline:
         )
 
     def _default_result_dir(self, video_path=None):
+        """按分析输出目录和视频名生成默认结果目录。"""
         base_dir = self.analysis_output_dir
         return make_result_dir(base_dir, source_path=video_path)
